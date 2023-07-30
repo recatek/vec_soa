@@ -1,0 +1,14 @@
+[package]
+name = "vec_soa"
+version = "0.1.0"
+authors = ["recatek"]
+description = "Vec-like structures with multiple independent storage arrays."
+edition = "2021"
+repository = "https://github.com/recatek/vec_soa"
+license = "MIT OR Apache-2.0"
+readme = "README.md"
+keywords = ["vec"]
+categories = ["data-structures"]
+
+[dependencies]
+seq-macro = { version = "0.3" } # For building "variadic" storage
