@@ -33,6 +33,48 @@ impl<T> RawDataPtr<T> {
         unsafe { Self(resolve_ptr(alloc::alloc(layout), layout)) }
     }
 
+    /// Shallow-copies this pointer, returning a pointer to the same data in memory.
+    #[inline(always)]
+    pub fn shallow_copy(&self) -> Self {
+        Self(self.0)
+    }
+
+    /// Returns the raw pointer for this storage, which may be dangling or uninitialized.
+    #[inline(always)]
+    pub fn raw_ptr(&mut self) -> NonNull<MaybeUninit<T>> {
+        self.0
+    }
+
+    /// Returns a raw pointer to the data at the given index.
+    ///
+    /// It is up to the caller to guarantee the following:
+    /// - The `index` points to valid and initialized data from this pointer.
+    #[inline(always)]
+    pub fn data_at(&self, index: usize) -> *const T {
+        unsafe {
+            // SAFETY: The caller guarantees that the index is within bounds, so the
+            // pointer will point to allocated data. The caller also guarantees that
+            // the data is valid at this index. We can cast a MaybeUninit<T> pointer
+            // to a T pointer since they have the same representation in memory.
+            self.offset(index).raw_ptr().as_ptr() as *const T
+        }
+    }
+
+    /// Returns a raw mutable pointer to the data at the given index.
+    ///
+    /// It is up to the caller to guarantee the following:
+    /// - The `index` points to valid and initialized data from this pointer.
+    #[inline(always)]
+    pub fn data_mut_at(&mut self, index: usize) -> *mut T {
+        unsafe {
+            // SAFETY: The caller guarantees that the index is within bounds, so the
+            // pointer will point to allocated data. The caller also guarantees that
+            // the data is valid at this index. We can cast a MaybeUninit<T> pointer
+            // to a T pointer since they have the same representation in memory.
+            self.offset(index).raw_ptr().as_ptr() as *mut T
+        }
+    }
+
     /// Reallocates this array's old data block into a new data block.
     ///
     /// # Safety
