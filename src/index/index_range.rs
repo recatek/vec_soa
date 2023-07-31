@@ -84,7 +84,7 @@ macro_rules! impl_n {
                         len: self.end - self.start,
                         data: unsafe { (#(slice.data.I.offset(self.start),)*) },
                     },
-                    lifetime: PhantomData,
+                    lifetime: PhantomData::<&'a $slice<#(T~I,)*>>,
                 }
             }
 
@@ -102,7 +102,7 @@ macro_rules! impl_n {
                         len: self.end - self.start,
                         data: unsafe { (#(slice.data.I.offset(self.start),)*) },
                     },
-                    lifetime: PhantomData,
+                    lifetime: PhantomData::<&'a mut $slice<#(T~I,)*>>,
                 }
             }
         }
